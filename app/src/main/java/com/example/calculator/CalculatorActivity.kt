@@ -2,7 +2,6 @@ package com.example.calculator
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 class CalculatorActivity : AppCompatActivity() {
@@ -20,14 +19,28 @@ class CalculatorActivity : AppCompatActivity() {
         eightButton.setOnClickListener { onNumberClicked(8) }
         nineButton.setOnClickListener { onNumberClicked(9) }
         plusButton.setOnClickListener { onPlusClicked() }
+        equalsButton.setOnClickListener { onEqualsClicked() }
     }
 
+    val calculator = com.example.calculator.Calculator()
+
     private var onPlusWasClicked = false
+    private var onEqualsClicked = false
+    private var numberOnTheScreen: Int = 0
 
 
     private fun onPlusClicked() {
-        val numberOnTheScreen = screenText.text
+        numberOnTheScreen = screenText.text.toString().toInt()
         onPlusWasClicked = true
+    }
+
+    private fun onEqualsClicked() {
+        onEqualsClicked = true
+        val currentScreenText = screenText.text.toString().toInt()
+        val result = calculator.add(currentScreenText, numberOnTheScreen)
+
+        screenText.text = result.toString()
+
     }
 
     private fun onNumberClicked(i: Int) {
@@ -36,11 +49,15 @@ class CalculatorActivity : AppCompatActivity() {
             screenText.text = i.toString()
             onPlusWasClicked = false
 
+
+        } else if (onEqualsClicked) {
+            screenText.text = i.toString()
+            onEqualsClicked = false
+            numberOnTheScreen = 0
         } else {
             val existingNumber = screenText.text
             val numberToShow = existingNumber.toString() + i.toString()
             screenText.text = numberToShow
-
         }
 
     }
